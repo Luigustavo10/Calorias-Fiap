@@ -7,7 +7,7 @@ import jakarta.persistence.*;
 public class Usuario {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "usuario_seq")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_seq")
     @SequenceGenerator(name = "usuario_seq", sequenceName = "seq_usuarios", allocationSize = 1)
     @Column(name = "USUARIO_ID") // O nome correto da coluna no banco
     private Long usuarioId;
