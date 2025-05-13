@@ -1,0 +1,20 @@
+- Sequence e tabela de categorias
+CREATE SEQUENCE SEQ_CATEGORIAS START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TBL_CATEGORIAS (
+                                CATEGORIA_ID INTEGER DEFAULT SEQ_CATEGORIAS.NEXTVAL PRIMARY KEY,
+                                NOME VARCHAR2(100) NOT NULL
+);
+
+-- Sequence e tabela de itens
+CREATE SEQUENCE SEQ_ITENS START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TBL_ITENS (
+                           ITEM_ID INTEGER DEFAULT SEQ_ITENS.NEXTVAL PRIMARY KEY,
+                           NOME VARCHAR2(100) NOT NULL,
+                           DESCRICAO VARCHAR2(255) NOT NULL,
+                           ESTADO VARCHAR2(50),
+                           DISPONIVEL NUMBER(1) DEFAULT 1,
+                           CATEGORIA_ID INTEGER REFERENCES TBL_CATEGORIAS(CATEGORIA_ID),
+                           USUARIO_ID INTEGER REFERENCES TBL_USUARIOS(USUARIO_ID)
+);
