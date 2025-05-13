@@ -1,57 +1,84 @@
 package br.com.fiap.calorias.model;
 
 import jakarta.persistence.*;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
 
 @Entity
-@Table(name = "tbl_usuarios") // Nome da tabela no banco
-public class Usuario {
+@Table(name = "tbl_usuarios")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode
+public class Usuario implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usuario_seq")
-    @SequenceGenerator(name = "usuario_seq", sequenceName = "seq_usuarios", allocationSize = 1)
-    @Column(name = "USUARIO_ID") // O nome correto da coluna no banco
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "SEQ_USUARIOS"
+    )
+    @SequenceGenerator(
+            name = "SEQ_USUARIOS",
+            sequenceName = "SEQ_USUARIOS",
+            allocationSize = 1
+    )
+    @Column(name = "usuario_id")
     private Long usuarioId;
 
-    @Column(name = "NOME", nullable = false, length = 100) // Garantir tamanho e não nulo
     private String nome;
-
-    @Column(name = "EMAIL", nullable = false, length = 100)
     private String email;
-
-    @Column(name = "SENHA", nullable = false, length = 20)
     private String senha;
 
-    // Getters e Setters
+    @Enumerated(EnumType.STRING)
+    private UsuarioRole role;
 
-    public Long getUsuarioId() {
-        return usuarioId;
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (this.role == UsuarioRole.ADMIN) {
+            return List.of(
+                    new SimpleGrantedAuthority("ROLE_ADMIN"),
+                    new SimpleGrantedAuthority("ROLE_USER")
+            );
+        } else {
+            return List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        }
     }
 
-    public void setUsuarioId(Long usuarioId) {
-        this.usuarioId = usuarioId;
+    @Override
+    public String getPassword() {
+        return "";
     }
 
-    public String getNome() {
-        return nome;
+    @Override
+    public String getUsername() {
+        return "";
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    @Override
+    public boolean isAccountNonExpired() {
+        return false;
     }
 
-    public String getEmail() {
-        return email;
+    @Override
+    public boolean isAccountNonLocked() {
+        return false;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return false;
     }
 
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
+    @Override
+    public boolean isEnabled() {
+        return false;
     }
 }
+
+

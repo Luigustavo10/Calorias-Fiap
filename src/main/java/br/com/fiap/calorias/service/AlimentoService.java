@@ -6,6 +6,9 @@ import br.com.fiap.calorias.model.Alimento;
 import br.com.fiap.calorias.repository.AlimentoRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -35,6 +38,7 @@ public class AlimentoService {
 
     }
 
+
     public AlimentoExibicaoDTO buscarPorId(Long id){
         Optional<Alimento> alimentoOptional =
                 alimentoRepository.findById(id);
@@ -46,9 +50,26 @@ public class AlimentoService {
         }
     }
 
-    public List<AlimentoExibicaoDTO> listarTodos(){
+    public AlimentoExibicaoDTO buscarPorNome(String nome){
+        Optional<Alimento> alimentoOptional =
+                alimentoRepository.buscarPorNome(nome);
+
+        if (alimentoOptional.isPresent()){
+            return new AlimentoExibicaoDTO(alimentoOptional.get());
+        } else {
+            throw new RuntimeException("Alimento não existe!");
+        }
+    }
+
+    public Page<AlimentoExibicaoDTO> listarTodos(Pageable paginacao){
         return alimentoRepository
-                .findAll()
+                .findAll(paginacao)
+                .map(AlimentoExibicaoDTO::new);
+    }
+
+    public List<AlimentoExibicaoDTO> listarAlimentosPorFaixaDeCalorias(Double caloriaMinima, Double caloriaMaxima){
+        return alimentoRepository
+                .listarAlimentosPorFaixaDeCalorias(caloriaMinima, caloriaMaxima)
                 .stream()
                 .map(AlimentoExibicaoDTO::new)
                 .toList();
@@ -89,7 +110,12 @@ public class AlimentoService {
 
     public Double calcularCalorias(Double proteinas, Double carboidratos, Double gorduras){
         Double calorias = (proteinas * 4) + (carboidratos * 4) + (gorduras * 9);
+        System.out.println(calorias);
         return calorias;
+    }
+
+    public List<AlimentoExibicaoDTO> listarTotalCaloriasMenorQue(Double totalCalorias){
+        return alimentoRepository.findByTotalCaloriasLessThan(totalCalorias);
     }
 
 }
