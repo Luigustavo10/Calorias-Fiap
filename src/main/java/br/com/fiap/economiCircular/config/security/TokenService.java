@@ -24,7 +24,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(palavraSecreta);
 
             String token = JWT.create()
-                    .withIssuer("calorias")
+                    .withIssuer("economiaCircular")
                     .withSubject(usuario.getEmail())
                     .withExpiresAt(gerarDataDeExpiracao())
                     .sign(algorithm);
@@ -49,7 +49,7 @@ public class TokenService {
             Algorithm algorithm = Algorithm.HMAC256(palavraSecreta);
 
             return JWT.require(algorithm)
-                    .withIssuer("calorias")
+                    .withIssuer("economiaCircular")
                     .build()
                     .verify(token)
                     .getSubject();
